@@ -14,4 +14,5 @@ module.exports = {
       }
     }    
   ],
+  pathPrefix: "/gatsby-react-leaflet",  
 }
