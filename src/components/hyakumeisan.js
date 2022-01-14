@@ -1,8 +1,11 @@
+import React, {useState, useRef, useEffect} from 'react'
+import { Marker, Popup} from 'react-leaflet'
+
 // original information source is 
 // http://chizujoho.jpn.org/01_chizujoho/39/mi39_2.html
 // http://chizujoho.jpn.org/01_chizujoho/39/mi39_2_img/100.csv
 
-const hyaku_meisan = [
+const name_poses = [
     {
       'name':'利尻山',
       'pos':[45.1786111,141.2419444],
@@ -405,5 +408,68 @@ const hyaku_meisan = [
     },
   ];
 
-export default hyaku_meisan
+  function Hyakumeisan({map, onIndexChanged}) {
+    const [flying, setFlying] = useState(false)
+    const indexRef = useRef()
+    useEffect(()=>{
+        // 最初は富士山
+        flyToIndex(71)
+    },[indexRef])
+  
+    const flyToIndex = (newIndex) =>{
+        if (newIndex < 0) {
+            newIndex = 0
+        } else if (100 <= newIndex) {
+            newIndex = 99
+        }
+        console.log("Fly to " + newIndex.toString(10) + ":" + name_poses[newIndex].name)
+        map.flyTo(name_poses[newIndex].pos)
+        indexRef.current = newIndex
+        if (onIndexChanged) {
+            onIndexChanged(newIndex, name_poses[newIndex].name)
+        }
+    }
+
+    const onStartStop = ()=>{
+      if (flying) {
+        setFlying(()=>false)
+      } else {
+        flyToIndex(indexRef.current)
+        setFlying(()=>true)
+      }
+    }
+
+    const onForward = (step)=>{
+        flyToIndex(indexRef.current + step)
+    }
+
+    return (
+      <p>
+        <button onClick={()=>onForward(-10)}>{"<< 10"}</button>
+        <button onClick={()=>onForward(-5)} >{"<< 5"}</button>
+        <button onClick={()=>onForward(-1)} >{"<< 1"}</button>
+        <button onClick={()=>onForward(1)} >{"1 >>"}</button>
+        <button onClick={()=>onForward(5)} >{"5 >>"}</button>
+        <button onClick={()=>onForward(10)}>{"10 >>"}</button>
+      </p>      
+    )
+  }
+
+  function Markers() {
+    return (
+      name_poses.map((name_pos, index) => {
+        return (
+  <Marker position={name_pos.pos} key={index}>
+      <Popup>
+          {name_pos.name}
+      </Popup>
+  </Marker>
+        )
+      }        
+  )
+    )
+  }
+  
+export {Markers}
+export default Hyakumeisan
   
