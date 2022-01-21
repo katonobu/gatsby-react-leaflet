@@ -1,6 +1,7 @@
 import React, {useState, useMemo, useCallback, useEffect} from 'react'
-import { MapContainer, LayersControl, TileLayer, Polygon} from 'react-leaflet'
+import { MapContainer, LayersControl, TileLayer, Polygon, Polyline } from 'react-leaflet'
 import {higashitotukasho, maichu, totukaku, yoshidayabe} from "../components/lines"
+import {wangan} from '../components/wangan.js'
 import Hyakumeisan, {Markers} from '../components/hyakumeisan';
 
 const center = [35.3608333,138.7275];
@@ -95,6 +96,9 @@ export default function Index() {
           </LayersControl.Overlay>
           <LayersControl.Overlay name="吉田矢部地区">
             <Polygon pathOptions={redOptions} positions={yoshidayabe} />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="湾岸道路">
+            <Polyline  pathOptions={redOptions} positions={wangan} />
           </LayersControl.Overlay>
         </LayersControl>
         <Markers></Markers>

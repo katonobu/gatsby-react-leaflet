@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useCallback, useRef, useEffect} from 'react'
 import { Marker, Popup} from 'react-leaflet'
 
 // original information source is 
@@ -409,14 +409,10 @@ const name_poses = [
   ];
 
   function Hyakumeisan({map, onIndexChanged}) {
-    const [flying, setFlying] = useState(false)
     const indexRef = useRef()
-    useEffect(()=>{
-        // 最初は富士山
-        flyToIndex(71)
-    },[indexRef])
-  
-    const flyToIndex = (newIndex) =>{
+
+    const flyToIndex = useCallback(
+      (newIndex) =>{
         if (newIndex < 0) {
             newIndex = 0
         } else if (100 <= newIndex) {
@@ -428,20 +424,18 @@ const name_poses = [
         if (onIndexChanged) {
             onIndexChanged(newIndex, name_poses[newIndex].name)
         }
-    }
-
-    const onStartStop = ()=>{
-      if (flying) {
-        setFlying(()=>false)
-      } else {
-        flyToIndex(indexRef.current)
-        setFlying(()=>true)
-      }
-    }
+      },
+      [map, onIndexChanged],
+    )
 
     const onForward = (step)=>{
-        flyToIndex(indexRef.current + step)
+      flyToIndex(indexRef.current + step)
     }
+
+    useEffect(()=>{
+        // 最初は富士山
+        flyToIndex(71)
+    },[flyToIndex])
 
     return (
       <p>
